@@ -1,0 +1,36 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
+    id 'application'
+	id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.json:json:20231013'
+    implementation 'com.google.guava:guava:32.1.1-jre'
+}
+
+testing {
+    suites {
+        test {
+            useJUnitJupiter('5.9.3')
+        }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+}
+
+run {
+    standardInput = System.in
+}
+
+application {
+    mainClass = 'project.App'
+}
