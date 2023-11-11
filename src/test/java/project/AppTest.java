@@ -45,6 +45,13 @@ class AppTest {
             MathHelper.parse("foo(2)");
         });
     }
+
+    @Test
+    public void testInvalidFunctionArgs() {
+        assertThrows(IllegalArgumentException.class, () -> {
+            MathHelper.parse("foo2");
+        });
+    }
     
     @Test
     public void testEmptyParenthesis() {

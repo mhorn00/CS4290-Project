@@ -183,6 +183,38 @@ public class MathHelper {
             tokens.add(curToken);
         }
 
+        //validation pass...
+        for (int i = 0; i < tokens.size(); i++) {
+            String cur = tokens.get(i);
+            if (isOperator(cur)) {
+                if (cur.equals("-")) {
+                    if (i+1 < tokens.size()) {
+                        if (!(isNumber(tokens.get(i+1)) || tokens.get(i+1).equals("("))) {
+                            throw new IllegalArgumentException("Negative sign must be followed by a number or parenthesis block");
+                        }
+                    } else {
+                        throw new IllegalArgumentException("Negative sign must be followed by a number or parenthesis block");
+                    }
+                } else {
+                    if (i-1 >= 0 && i+1 < tokens.size()) {
+                        if (!(isNumber(tokens.get(i-1)) || tokens.get(i-1).equals(")")) || !(isNumber(tokens.get(i+1)) || tokens.get(i+1).equals("("))) {
+                            throw new IllegalArgumentException("Operator must be preceded and followed by a number or parenthesis block");
+                        }
+                    } else {
+                        throw new IllegalArgumentException("Operator must be preceded and followed by a number or parenthesis block");
+                    }
+                }
+            } else if (isFunction(curToken)) {
+                if (i+1 < tokens.size()) {
+                    if (!tokens.get(i+1).equals("(")) {
+                        throw new IllegalArgumentException("Function must be followed by a parenthesis block");
+                    }   
+                } else {
+                    throw new IllegalArgumentException("Function must be followed by a parenthesis block");
+                }
+            }
+        }
+
         // bc im lazy and don't want to implement operator precedence (and this is more fun lol),
         // do a final pass to inset parentheses around * and / operators and ^ lol
         // the expression should already be valid by this point

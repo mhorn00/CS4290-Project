@@ -446,6 +446,13 @@ public class Server {
         return "Exception sending " + sendType + (forType != null ? " for " + forType : "") + " to '" + receiver + "'! Assuming disconnect";
     }
 
+    /**
+     * Returns a string containing the error message for an invalid packet received from a client.
+     *
+     * @param receivedType The type of packet received.
+     * @param cs The client status object associated with the client that sent the invalid packet.
+     * @return A string containing the error message for an invalid packet received from a client.
+     */
     private static String invalidPacketExceptionMessage(@Nullable PacketType receivedType, @Nullable ClientStatus cs) {
         return "Invalid packet " + (receivedType != null ? " type " + receivedType : " format ") + " received from " + (cs != null ? "'" + cs.getName() + "'" : " unknown client ")
                 + "! Dropping client. Client was connected for " + (cs != null ? cs.getTimeConnected().until(Instant.now(), ChronoUnit.SECONDS) : "UNKNOWN") + " seconds";
@@ -456,6 +463,11 @@ public class Server {
         return "Server/" + HOST + ":" + PORT;
     }
 
+    /**
+     * This class represents the status of a client connected to the server.
+     * It contains information such as the client's name, connection acknowledgement status,
+     * heartbeat timeout, heartbeat sent status, selection key, time of connection, and socket channel.
+     */
     private static class ClientStatus {
         private boolean connectAck;
         private int heartbeatTimeout;
@@ -518,6 +530,10 @@ public class Server {
         }
     }
 
+    /**
+     * A class representing a math request from a client.
+     * Contains the packet and client status associated with the request.
+     */
     public static class MathRequest {
         private final Packet packet;
         private final ClientStatus client;
