@@ -24,6 +24,7 @@ class Client {
     public final SocketChannel socket;
     public boolean isConnected;
     public volatile boolean expectResult;
+    public volatile boolean shouldExit;
 
     public Client(String host, int port, String name) throws IOException {
         this.HOST = host;
@@ -31,6 +32,7 @@ class Client {
         this.NAME = name;
         this.isConnected = false;
         this.expectResult = false;
+        this.shouldExit = false;
         this.socket = SocketChannel.open();
     }
 
@@ -52,11 +54,14 @@ class Client {
         App.log("Sent CONNECT to " + HOST + ":" + PORT, LogLevel.INFO);
 
         // Start listening for packets
-        while (true) {
+        while (!shouldExit) {
             ByteBuffer buffer = ByteBuffer.allocate(2048);
             try {
                 socket.read(buffer);
             } catch (IOException e) {
+                if (shouldExit) {
+                    return;
+                }
                 App.log("Exception reading from socket. Terminating...", LogLevel.ERROR);
                 System.exit(-1);
                 return;
@@ -205,7 +210,7 @@ class Client {
      */
     static class KeyboardInputThread extends Thread {
         private final Client client;
-
+        
         public KeyboardInputThread(Client client) {
             this.client = client;
         }
@@ -236,6 +241,7 @@ class Client {
 
                     // if input is exit and client is connected, send DISCONNECT and exit
                     if (input.equals("exit") && client.isConnected) {
+                        client.shouldExit = true;
                         App.log("Disconnecting...", LogLevel.INFO);
                         try {
                             client.socket.write(PacketHelper.DISCONNECT(client, "Client requested disconnect").toBuffer());

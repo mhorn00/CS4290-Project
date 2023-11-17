@@ -265,10 +265,13 @@ public class Server {
      */
     private void handleSendHeartbeat() {
         for (ClientStatus cs : clients.values()) {
+            // client is not connected yet
             if (!cs.isConnectionAck())
                 continue;
+            // client doesnt need a heartbeat yet
             if (!cs.needsHeartbeat()) {
                 cs.incHeartbeatTimeout();
+            // client needs a heartbeat and one has not been sent yet
             } else if (cs.needsHeartbeat() && !cs.getHeartbeatSent()) {
                 App.log("Sending HEARTBEAT to " + cs.getName(), LogLevel.INFO);
                 cs.setHeartbeatSent();
@@ -280,6 +283,7 @@ public class Server {
                     cs.getKey().cancel();
                     cs.tryCloseSocket();
                 }
+            // client needs a heartbeat and one has been sent
             } else if (cs.needsHeartbeat() && cs.getHeartbeatSent()) {
                 App.log("Client '" + cs.getName() + "' has not responded to HEARTBEAT after " + HEARTBEAT_TIMEOUT + " seconds. Dropping client. Client was connected for "
                         + clients.get(cs.getKey()).getTimeConnected().until(Instant.now(), ChronoUnit.SECONDS) + " seconds", LogLevel.INFO);
@@ -305,6 +309,7 @@ public class Server {
      * @param client The client's SocketChannel.
      */
     private void handleConnect(Packet p, SelectionKey key, SocketChannel client) {
+        // check if client with same name already connected and send DISCONNECT if so
         if (clients.values().stream().anyMatch(cs -> cs.getName().equals(p.getSender()))) {
             App.log("Received CONNECT from client '" + p.getSender() + "' but client with same name already connected. Ignoring...", LogLevel.WARN);
             try {
@@ -316,6 +321,7 @@ public class Server {
             key.cancel();
             return;
         }
+        // add client to list of connected clients and send ACK
         ClientStatus cs = new ClientStatus(p.getSender(), p.getTimestamp(), key);
         clients.put(key, cs);
         App.log("Received CONNECT from '" + cs.getName() + "'", LogLevel.INFO);
