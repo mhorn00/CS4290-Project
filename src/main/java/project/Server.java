@@ -218,18 +218,19 @@ public class Server {
                 return;
 
                 // check if packet timestamp is valid
+                //nvm this doint work
             } else if (p.getTimestamp().isAfter(Instant.now())) {
-                App.log("Received packet from '" + p.getSender() + "' with invalid timestamp! Dropping client... Client was connected for "
-                        + cs.getTimeConnected().until(Instant.now(), ChronoUnit.SECONDS) + " seconds", LogLevel.WARN);
-                try {
-                    client.write(PacketHelper.DISCONNECT(this, "Client sent packet with invalid timestamp. Dropping client...").toBuffer());
-                } catch (IOException e) {
-                    App.log(packetSendExceptionMessage(PacketType.DISCONNECT, null, cs.getName()), LogLevel.WARN);
-                }
-                clients.remove(key);
-                key.cancel();
-                tryCloseSocket(client);
-                return;
+                // App.log("Received packet from '" + p.getSender() + "' with invalid timestamp! Dropping client... Client was connected for "
+                //         + cs.getTimeConnected().until(Instant.now(), ChronoUnit.SECONDS) + " seconds", LogLevel.WARN);
+                // try {
+                //     client.write(PacketHelper.DISCONNECT(this, "Client sent packet with invalid timestamp. Dropping client...").toBuffer());
+                // } catch (IOException e) {
+                //     App.log(packetSendExceptionMessage(PacketType.DISCONNECT, null, cs.getName()), LogLevel.WARN);
+                // }
+                // clients.remove(key);
+                // key.cancel();
+                // tryCloseSocket(client);
+                // return;
             }
         }
 

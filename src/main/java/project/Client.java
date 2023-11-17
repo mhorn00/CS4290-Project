@@ -181,7 +181,6 @@ class Client {
     /**
      * Handles the received packet of type RESULT.
      * Logs the received message and sets the expectResult flag to false.
-     * Sends an ACK packet to the sender.
      * If an IOException occurs while sending the ACK packet, logs an error and terminates the program.
      * 
      * @param p the received packet of type RESULT
@@ -189,13 +188,13 @@ class Client {
     private void handleResult(Packet p) {
         App.log("Received RESULT from '" + p.getSender() + "': " + p.getContent(), LogLevel.INFO);
         expectResult = false;
-        try {
-            socket.write(PacketHelper.ACK(this).toBuffer());
-        } catch (IOException e) {
-            App.log("Exception sending ACK for RESULT to '" + p.getSender() + "'! Terminating...", LogLevel.ERROR);
-            System.exit(-1);
-            return;
-        }
+        // try {
+        //     socket.write(PacketHelper.ACK(this).toBuffer());
+        // } catch (IOException e) {
+        //     App.log("Exception sending ACK for RESULT to '" + p.getSender() + "'! Terminating...", LogLevel.ERROR);
+        //     System.exit(-1);
+        //     return;
+        // }
     }
 
     @Override
